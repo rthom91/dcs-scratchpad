@@ -98,7 +98,9 @@ local function bufradd(arg, msg)
     local dateStr = string.format('[%i:%02i:%02i] ', date.hour, date.min, date.sec)
     arg.idx = arg.idx + 1
     arg.buf = arg.buf .. dateStr .. msg .. '\n'
-    arg.panel.button:setText(string.upper(arg.panel.title))
+    if arg.panel then
+        arg.panel.button:setText(string.upper(arg.panel.title))
+    end
 end
 
 local function showbuf(bufnm)

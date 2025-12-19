@@ -7,7 +7,7 @@
 --]]
 
 -- module specific configuration
-wpseq({cur=1, diff = 1, route = '.B', menus = 'mlj'})
+wpseq({enable=true, cur=1, diff = 1, route = '.B', menus = 'mlj',})
 
 ft ={}
 ft.order={'start', 'mpd', 'A/Gload', 'night', 'day', 'route'}
@@ -88,31 +88,38 @@ ft['mpd'] = function ()
             ttt('Power Switch', {device=dev, onvalue=-1})
             for x,y in pairs(screen) do
                 if debug then
-                    loglocal('PROG: 6')
-                else
-                    ttt('Power Switch',{device=dev, action=button[6]})
+                    loglocal('F15E mpd: 1')
                 end
+                ttt('Power Switch',{device=dev, action=button[6]})
 
                 for i,j in pairs(menu[y[1]]) do
-                    if debug then loglocal('PAGE: '..y[1]..'='..y[2]..' j: '..j)
-                    else ttt('Power Switch',{device=dev, action=button[j]}) end
+                    if debug then
+                        loglocal('F15E mpd PAGE: '..y[1]..'='..y[2]..' j: '..j)
+                    end
+                    ttt('Power Switch',{device=dev, action=button[j]})
                 end
 
                 if type(y[2]) == 'string' and #y[2] == 3 then
                     for k=1, #menu2[y[2]] do
-                        if debug then loglocal('MM: '..menu2[y[2]][k])
-                        else ttt('Power Switch',{device=dev, action=button[menu2[y[2]][k]]}) end
+                        if debug then
+                            loglocal('F15E mpd MM: '..menu2[y[2]][k])
+                        end
+                        ttt('Power Switch',{device=dev, action=button[menu2[y[2]][k]]})
                     end
-                    if debug then loglocal('MM SET: '..menu[y[1]][#menu[y[1]]])
-                    else ttt('Power Switch',{device=dev, action=button[menu[y[1]][#menu[y[1]]]]}) end
-                    if debug then loglocal('MM3 finalize:2x 6')
-                    else ttt('Power Switch',{device=dev, action=button[6]}) end
+                    if debug then
+                        loglocal('F15E mpd MM SET: '..menu[y[1]][#menu[y[1]]])
+                    end
+                    ttt('Power Switch',{device=dev, action=button[menu[y[1]][#menu[y[1]]]]})
+                    if debug then
+                        loglocal('F15E mpd MM3 finalize:2x 6')
+                    end
+                    ttt('Power Switch',{device=dev, action=button[6]})
                 end  -- if type
             end --for x,y
         end --if screens
-    end --for tmp
+    end --for dev
 
-    if not debug then ttt('Power Switch',{device=de, action=button[6]}) end
+    ttt('Power Switch',{device=de, action=button[6]})
 
 end --end of mpd()
 
@@ -452,23 +459,22 @@ updateroute()
 -- route v0.10
 -- cycle through routes A-C for wp entry
 ft['route'] = function()
-    local w = wpseq()
+    if LT[unittype].nextroute then
+        local w = wpseq()
 
-    for i=14, 23 do
-        local j = panel[i]
-        local btext = string.sub(j['button']:getText(), 1, 5)
-        if btext == 'route' then
-            local nextrt = string.byte(string.sub(w.route, 2)) + 1
-            if nextrt > 67 then
-                nextrt = 65
+        for i=14, 23 do         -- look for route button
+            local j = panel[i]
+            local btext = string.sub(j['button']:getText(), 1, 5)
+            if btext == 'route' then
+                w.route = LT[unittype].nextroute[w.route]
+                j['button']:setText('route'..w.route)
+                wpseq(w)
+                return
             end
-            w.route = '.'..string.char(nextrt)
-            j['button']:setText('route'..w.route)
-            wpseq(w)
-            return
         end
+        loglocal('F-15E route() button not found')
     end
-    loglocal('F-15E route() button not found')
+
 end                             -- end route
 
 return ft

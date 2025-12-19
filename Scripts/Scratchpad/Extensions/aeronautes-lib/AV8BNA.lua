@@ -6,9 +6,7 @@
 --]]
 
 -- module specific configuration
-wpseq({cur=1,
-       diff = 1,
-})
+wpseq({enable=true, cur=1, diff = 1,})
 
 ft ={}
 ft.order={'start', 'setup', 'maptoggle', 'night'}
@@ -28,6 +26,33 @@ ttn('MPCD Left Button 3')
 end
 
 --#################################
+-- setup v0.2
+-- cockpit setup that can be used after startup or module autostart
+ft['setup'] = function(input)
+
+tt('Seat Ground Safety Lever')
+tt('Flaps Power Switch',{value=.5})
+tt('RWR Power/Volume Button',{value=.5})
+tt('Decoy Dispenser Control',{value=.4})
+tt('Jammer Control',{value=.2})
+
+ttt('MPCD Left Button 2')
+tt('Display Brightness Control',{value=.9})
+tt('HUD Off/Brightness Control',{value=1})
+tt('Parking Brake Lever')
+ttn('STO Stop Lever')
+
+tt('Comm 1 Volume Control', {value=.7})
+tt('Comm 2 Volume Control', {value=.7})
+tt('Master Arm Switch')
+tt('DMT Toggle On/Off')
+
+ttn('FLIR Power Switch')
+tt('INS Mode Knob',{value=.4})
+
+end                         -- end setup
+
+--#################################
 -- start v0.2
 -- start the jet; Master Caution will engage after this finishes
 ft['firstspool'] = true
@@ -40,7 +65,7 @@ ft['start'] = function(action)
         -- Beginning of start procedure
         net.recv_chat('AV8 start, throttle off')
 ttn('Canopy Handle')
-ttn('Oxygen Switch',{})
+ttn('Oxygen Switch')
 tt('Battery Switch')
 tt('Throttle Cutoff Lever')
 Export.LoSetCommand(2004,1)     --throttle off
@@ -54,6 +79,7 @@ tt('MPCD Left Off/Brightness Control')
 tt('MPCD Right Off/Brightness Control')
 ttt('MPCD Right Button 11')
 tt('Engine Start Switch')
+tt('Parking Brake Lever')
 
     ft['start']('engspool')
     elseif action == 'engspool' then
@@ -77,7 +103,7 @@ tt('Engine Start Switch')
             end
         end
     elseif action == 'posteng' then
-
+---[[
 tt('Seat Ground Safety Lever')
 tt('Flaps Power Switch',{value=.5})
 tt('RWR Power/Volume Button',{value=.5})
@@ -86,33 +112,30 @@ tt('Jammer Control',{value=.2})
 
 ttt('MPCD Left Button 2')
 tt('Display Brightness Control',{value=.9})
-tt('HUD Off/Brightness Control',{value=.5})
+tt('HUD Off/Brightness Control',{value=1})
 tt('Parking Brake Lever')
-tt('STO Stop Lever',{value=.65})
+ttn('STO Stop Lever')
 
 tt('Comm 1 Volume Control', {value=.7})
 tt('Comm 2 Volume Control', {value=.7})
 tt('Master Arm Switch')
 tt('DMT Toggle On/Off')
-
---INS align
 tt('INS Mode Knob',{value=.4})
+
+--]]
+        --INS align
+
+--        tt['setup']()
+
     end                             -- posteng
 
 tt('Master Caution')
 end                             -- end of start
 
---#################################
--- setup v0.1
--- cockpit setup that can be used after startup or module autostart
-ft['setup'] = function(input)
 
-ttn('FLIR Power Switch')
-
-end                         -- end setup
 
 --#################################
--- night v0.1
+-- night v0.2
 -- turn on cockpit lights and NW light
 ft['night'] = function(input)
 
@@ -123,6 +146,13 @@ tt('Instruments Lights',{value=.3})
 tt('Console Lights',{value=.3})
 tt('Annunciator Lights',{value=.3})
 ttn('External Auxiliary Lights Switch')
+
+-- enable HUD FLIR
+ttn('FLIR Power Switch')
+tt('HUD Video Brightness Control', {value=.35})
+tt('HUD Video Contrast Control', {value=.55})
+ttn('HUD Display Mode Switch')
+ttt('',{action=hotas_commands.SSS_CENTER, device=devices.MSC})
 
 end                             -- end night
 
