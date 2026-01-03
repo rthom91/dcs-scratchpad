@@ -41,7 +41,7 @@
 --]]
 
 -- module specific configuration
-wpseq({cur=1, diff = 1, })
+wpseq({enable=true, cur=1, diff = 1, })
 
 local ft = {}
 ft.order = {'start', 'takeoff', 'landing', 'night', 'pylon', 'cannon'}

@@ -436,7 +436,7 @@ Hist = {
     buf = '',
     add = function(self, msg)
         local date = os.date('*t')
-        local dateStr = string.format("%i:%02i:%02i ", date.hour, date.min, date.sec)
+        local dateStr = string.format('%i:%02i:%02i ', date.hour, date.min, date.sec)
         if not msg then
             msg = '""'
         end
@@ -475,12 +475,13 @@ local unittype = ''             -- DCS name for current module
 local unittab = {}              -- table of module specific functions
 local kp = {}                   -- keypad table for wp(), press() api
 local ttlist = {}               -- tool tips from clicabledata.lua
+local ttrie = {}                -- trie for tool tips
 
 -- butt vars below control the apit UI buttons created in scratchpad
 local butts = {}
 local buttfn = {} -- indirection funcs to bind to onClick by vary with assignCustom()
-local buttfnlimit = 10 -- limit on each of global and module button funcs
-local buttfnamt = 20            -- number of assignable custom function buttons
+local buttfnlimit = 8 -- limit on each of global and module button funcs
+local buttfnamt = 16            -- number of assignable custom function buttons
 local buttw = 50
 local butth = 30
 local panelbytitle = {}
@@ -521,6 +522,23 @@ Spinr = {
         self.setPageNotice('D')
     end,
 }
+
+local Dot = {}
+Dot.dlog = nil
+Dot.vis = false
+
+local function Dotcreate()
+    if Dot.dlog ~= nil then
+        return
+    end
+
+    Dot.dlog = DialogLoader.spawnDialogFromFile(lfs.writedir() .. "Scripts\\Scratchpad\\CrosshairWindow.dlg")
+    local screenw, screenh = dxgui.GetScreenSize()
+    local x = screenw/2 - 4
+    local y = screenh/2 - 4
+    Dot.dlog:setBounds(math.floor(x), math.floor(y), 8, 8)
+
+end
 
 local function copytable(src)
     dst = {}
@@ -663,6 +681,8 @@ local LT = {           -- per module customization for convenience api
         ['notes'] = [[Waypoint input requires UFC be in point data submenu. WP sequencing supported.]],
         ['coordsType'] = {format = 'DDM', precision = 3, lonDegreesWidth = 3},
         ['wpentry'] = 'LATbLONcALTg',
+        ['nextroute'] = {['.A'] = '.B', ['.B'] = '.C', ['.C'] = 'Base',
+            ['Base'] = '.A'},
         prewp = function()
             if wps.enable then
                 if wps.menus ~= '' then
@@ -672,7 +692,11 @@ local LT = {           -- per module customization for convenience api
                 if wps.cur > 0 then
                     local tmp = tostring(wps.cur)
                     if wps.route then
-                        tmp = tmp .. wps.route..'a'
+                        if wps.route == 'Base' then
+                            tmp = 'Ba'
+                        else
+                            tmp = tmp .. wps.route..'a'
+                        end
                     end
                     loglocal('F15 prewp(): cur press() '..tmp, 3)
                     press(tmp)
@@ -826,12 +850,12 @@ local LT = {           -- per module customization for convenience api
         ['coordsType'] = {format = 'DDM', precision = 1, lonDegreesWidth = 3},
         ['wpentry'] = 'LATeLONe',
         ['customfn'] = Apitlibdir..'Ka-50_3.lua',
-        prewp = function(input)
-            if wps.enable and string.sub(input,1,1) ~= 'n' then
+        prewp = function()
+            if wps.enable then
                 if wps.cur > -1 then
                     press('n'..wps.route..wps.cur)
                 else
-                    loglocal('Ka-50 prewp() invalid wps.cur: ',net.lua2json(wps))
+                    loglocal('Ka-50 prewp() wps.cur<0: ',net.lua2json(wps))
                     return
                 end
             end
@@ -1827,6 +1851,68 @@ function cancelmacro()
     Spinr:rest()
 end
 
+-- Trie Node definition
+TrieNode = {}
+TrieNode.__index = TrieNode
+
+function TrieNode:new()
+    return setmetatable({children = {}, isEndOfWord = false, elem={}}, TrieNode)
+end
+
+-- Trie definition
+Trie = {}
+Trie.__index = Trie
+
+function Trie:new()
+    return setmetatable({root = TrieNode:new()}, Trie)
+end
+
+-- Insert function: adds a key to the Trie
+function Trie:insert(key)
+    if type(key) ~= "string" or #key == 0 then
+        return nil
+    end
+    local node = self.root
+    for i = 1, #key do
+        local char = key:sub(i, i)
+        if not node.children[char] then
+            node.children[char] = TrieNode:new()
+        end
+        node = node.children[char]
+    end
+    node.isEndOfWord = true
+    return node
+end
+
+function Trie:search(key)
+    local node = self.root
+    for i = 1, #key do
+        local char = key:sub(i, i)
+        if not node.children[char] then
+            return nil
+        end
+        node = node.children[char]
+    end
+    return node
+end
+
+-- Helper function to collect all keys from a node
+local function collectKeys(node, prefix, results)
+    if node.isEndOfWord then
+        table.insert(results, prefix)
+    end
+    for char, child in pairs(node.children) do
+        collectKeys(child, prefix .. char, results)
+    end
+end
+
+-- Returns all keys starting from a given node
+function Trie:getAllKeysFromNode(node, prefix)
+    local results = {}
+    collectKeys(node, prefix or "", results)
+    return results
+end
+
 local modname2dir = {}
 function searchmodules()
     local moddir2name = {}
@@ -1845,13 +1931,13 @@ function searchmodules()
     end                         -- end of scandir()
 
     local scandirtot = 0
-    scandirtot = scandir(lfs.currentdir()..'Mods\\aircraft\\') --DCS install dir modules
-    scandirtot = scandirtot + scandir(lfs.writedir()..'Mods\\aircraft\\')        --Saved Games modules
+    scandirtot = scandir(lfs.currentdir()..[[Mods\aircraft\]]) --DCS install dir modules
+    scandirtot = scandirtot + scandir(lfs.writedir()..[[Mods\aircraft\]])        --Saved Games modules
 
     local modnametot = 0
     for i,j in pairs(moddir2name) do
         local fp, res
-        fp, res = io.open(j.dir..'\\entry.lua')
+        fp, res = io.open(j.dir..[[\entry.lua]])
         if fp then
             for l in fp:lines() do
                 ut = string.match(l, [[^%w+_flyable[(]['"]([^'"]+)]])
@@ -2220,6 +2306,7 @@ function loadDTCBuffer(text)
                  loglocal = loglocal,
                  unittab = unittab,
                  ttlist = ttlist,
+                 tttrie = tttrie,
                  panel = panel,
                  unittype = unittype,
                  getinput = getinput,
@@ -2270,6 +2357,8 @@ function assignCustom()
                      Apitlibsubdir = Apitlibsubdir,
                      getTextarea = getTextarea,
                      panel = panel,
+                     ttlist = ttlist,
+                     tttrie = ttrie,
         }
         --needed to pickup all the module macro definitions like
         --device/action
@@ -2341,7 +2430,7 @@ function assignCustom()
     ok, res, funs  = doCustom(infn)
 
     if ok then
-        for i=1,#funs do -- add module custom funcs to buttons 1-10
+        for i=1,#funs do -- add module custom funcs to buttons
             buttfn[i] = funs[i].fn
             panelbytitle[tostring(i)].button:setText(funs[i].name)
             panelbytitle[tostring(i)].button:setVisible(true)
@@ -2354,8 +2443,8 @@ function assignCustom()
     ok, res, funs  = doCustom(infn)
     if ok then
         local j
-        for i=1,#funs do -- add module custom funcs to buttons 11-20
-            j = i + 10
+        for i=1,#funs do -- add module globalcustom funcs to buttons 
+            j = i + buttfnlimit
             buttfn[j] = funs[i].fn
             panelbytitle[tostring(j)].button:setText(funs[i].name)
             panelbytitle[tostring(j)].button:setVisible(true)
@@ -2453,9 +2542,9 @@ function uploadinit()
         Cockpit/Scripts dir.
     --]]
     function checkcockpitfile(moddir, fn)
-        local infn = moddir .."\\Cockpit\\Scripts\\" .. fn
+        local infn = moddir ..[[\Cockpit\Scripts\]] .. fn
         if not checkfile(infn) then
-            infn = moddir .."\\Cockpit\\" .. fn
+            infn = moddir ..[[\Cockpit\]] .. fn
             if not checkfile(infn) then
                 return nil
             else
@@ -2465,26 +2554,41 @@ function uploadinit()
         return infn
     end
 
-    local infn = dirname .."\\Cockpit\\Scripts\\command_defs.lua"
-    local infn = checkcockpitfile(dirname, 'command_defs.lua')
-    if not infn then
-        loglocal('aeronautespit uploadinit() file not available, '.. infn)
-        return
+    function checkcockpitdir(moddir, fn)
+        local dirn = moddir ..[[\Cockpit\Scripts\]]
+        local infn = dirn .. fn
+        if not checkfile(infn) then
+            loglocal('checkcockpitdir1: '..infn)
+            dirn = moddir ..[[\Cockpit\]]
+            infn = dirn .. fn
+            if not checkfile(infn) then
+                return nil
+            else
+                loglocal('checkcockpitdir2: '..infn)
+                return dirn
+            end
+        end
+        loglocal('checkcockpitdir3: '..dirn)
+        return dirn
     end
-    dofile(infn)
 
-    infn = checkcockpitfile(dirname, 'devices.lua')
-    if not infn then
-        loglocal('aeronautespit uploadinit() file not available, '.. infn)
-        return
-    end
-    dofile(infn)
+    elements = {}
+    _G.LockOn_Options={}
+    _G.LockOn_Options.script_path=checkcockpitdir(dirname,'clickabledata.lua')
 
-    infn = checkcockpitfile(dirname, 'clickabledata.lua')
+    if not class_type then
+        _G.get_option_value=function()return nil end
+        _G.get_aircraft_property_or_nil=_G.get_option_value
+
+        dofile(lfs.currentdir()..[[Scripts\Aircrafts\_Common\Cockpit\clickable_common.lua]])
+    end
+
+    local infn = checkcockpitfile(dirname, 'clickabledata.lua')
     if not infn then
         loglocal('aeronautespit uploadinit() file not available, '.. infn)
         return
     end
+    dofile(infn) -- load elements
 
     local infile, res
     infile, res = io.open(infn)
@@ -2499,7 +2603,7 @@ function uploadinit()
         return(nil)
     end
 
-    local tt, dev, butn
+    local ptr, tt, dev, butn
     --TODO revise this temp code
     if unittype == 'Hercules' then -- temp accomodation for Herc which uses single device for all actions
         ttlist = {}
@@ -2521,9 +2625,14 @@ function uploadinit()
         end
     else
         ttlist = {}
+        tttrie = Trie:new()
         while line do
-            tt, dev, butn = string.match(line, '^elements%[".+"%]%s*=.+%("(.+)"%)%s*,%s*([^,]+),%s*([^,]+)')
+            ptr, tt, dev, butn = string.match(line, '^elements%["(.+)"%]%s*=.+%("(.+)"%)%s*,%s*([^,]+),%s*([^,]+)')
             if tt then
+                local newn = tttrie:insert(tt)
+--                table.insert(newn.elem, elements[ptr])
+--                loglocal('PTR: '..ptr.. ' elements: '..net.lua2json(elements[ptr]))
+--                loglocal('tt: '..tt..' dev: '..dev..' butn: '..butn)
                 local tstr, istr -- table and index names
                 tstr = string.match(dev,'[^.]+\.(.+)')
 
@@ -2580,7 +2689,7 @@ function getCurrentLineOffsets(text, cur)
 
     local linestart = cur
     local lineend = cur
-    local nl = string.byte("\n")
+    local nl = string.byte('\n')
 
     for i = cur, 0, -1 do
         if text:byte(i) == nl then
@@ -2811,9 +2920,9 @@ function showCustom(TA)
 end                             -- end showCustom()
 
 function createbuttons()
-    local numbutts = 13  -- number of static buttons, LatLon - modload
+    local numbutts = 14  -- number of static buttons, LatLon - modload
     local numrow1 = 7
-    local numrow2 = 4
+    local numrow2 = 5
     local rowh = 0
 
     local buttx = 0
@@ -2887,8 +2996,8 @@ function createbuttons()
             local str = 'wp('..
                 '{alt=' ..string.format('%.3f',alt)..
                 [[,name='']] ..
-                ',lat=' ..tostring(lat)..
-                ',lon=' ..tostring(lon)..
+                ',lat=' ..string.format('%2.8f',lat)..
+                ',lon=' ..string.format('%3.8f',lon)..
                 ',ver=' ..tostring(wpver)..
                 '})'
             TA:insertBelow(str)
@@ -2923,8 +3032,14 @@ function createbuttons()
         panelbytitle['loglvl'].button:setText('log:'..tostring(dbglvl))
     end
 
-    butts[11][5] = 'help'
-    butts[11][6] = function(TA)
+    butts[11][5] = 'dot'
+    butts[11][6] = function()
+        Dot.vis = not Dot.vis
+        Dot.dlog:setVisible(Dot.vis) 
+    end
+
+    butts[12][5] = 'help'
+    butts[12][6] = function(TA)
         if switchPage(Scratchdir..Scratchpadfn) then
             TA:setText('')
             -- hardcoded 1MB file limit from scratchpad
@@ -2938,23 +3053,24 @@ function createbuttons()
         end
     end
 
-    butts[12][5] = 'mod'
-    butts[12][6] = showCustom
+    butts[13][5] = 'mod'
+    butts[13][6] = showCustom
 
-    butts[13][5] = 'modload'
-    butts[13][6] = function()
+    butts[14][5] = 'modload'
+    butts[14][6] = function()
         loglocal('aeronautespit: reload click '..#LT)
         assignKP()
         assignCustom()
         assignCustom(Globalcustomfile)
+        showCustom()
     end
 
     --start row of "dynamic" buttons after static buttons above
     -- module related dynamic functions
     rowh = rowh + butth         -- increment row
     buttw = buttw + 20          -- slightly wider to handle longer button titles
-    for i=1,10 do               -- indent row by 10
-        butts[numbutts+i] = {((i-1)*buttw)+10, rowh, buttw, butth, tostring(i)}
+    for i=1,buttfnlimit do               -- indent row by 10
+        butts[numbutts+i] = {((i-1)*buttw), rowh, buttw, butth, tostring(i)}
         butts[numbutts+i][6] = function(T)
             if buttfn[i] then
                 buttfn[i](getinput())
@@ -2965,8 +3081,10 @@ function createbuttons()
 
     --universal functions not module related
     rowh = rowh + butth         -- increment row
-    for i=11,buttfnamt do
-        butts[numbutts+i] = {((i-11)*buttw), rowh, buttw, butth, tostring(i)}
+    local j = 0
+    for i=buttfnlimit+1,buttfnamt do
+        butts[numbutts+i] = {(j*buttw), rowh, buttw, butth, tostring(i)}
+        j = j + 1
         butts[numbutts+i][6] = function(T)
             if buttfn[i] then
                 buttfn[i](getinput())
@@ -2988,6 +3106,7 @@ function createbuttons()
         addButton(j[1], j[2], j[3], j[4], j[5], j[6])
     end
 
+    Dotcreate()
 end                             -- end createbuttons
 
 createbuttons()

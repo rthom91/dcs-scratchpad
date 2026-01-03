@@ -1,6 +1,8 @@
 --[[ working functions: presetwp, presetfix
 
-    ## presetfix - This function will set the correct altitude for the
+    ## presetfix - DEPRECATED: Currently implemented in this file but
+       not defined or displayed.
+       This function will set the correct altitude for the
        waypoints of the currently loaded theater. It will only change
        altitudes set at 2000m as that is the DCS default. This will
        prevent the function from changing any altitudes the user has
@@ -51,7 +53,7 @@
 --]]
 
 local ft = {}
-ft.order = {'presetwp', 'presetfix', 'RTlist', 'RTload', 'RTshow', 'ammo', 'globalfile'}
+ft.order = {'presetwp', 'RTlist', 'RTload', 'RTshow', 'ammo', 'globalfile'}
 
 local presetfn = lfs.writedir()..[[Config\RouteToolPresets\]].._current_mission.mission.theatre..'.lua'
 
@@ -605,6 +607,9 @@ end                             -- end presetwp
 -- theater to the actual ground height for any altitudes set at
 -- 2000. This means if you set your own value in the altitude edit
 -- box, presetfix will not alter it.
+
+-- DEPRECATED 
+--[[
 ft['presetfix'] = function(input)
     loglocal('presetfix call', 2)
     readpresets()
@@ -628,6 +633,7 @@ ft['presetfix'] = function(input)
     end
     writepresets(presets)
 end                         -- presetfix
+--]]
 
 --#################################
 -- RTlist v0.1
@@ -721,6 +727,7 @@ CTLDunit = {
     ['Mi-24P']=1,
     ['Mi-8MT']=1,
     ['UH-1H']=1,
+    ['UH-60L']=1,
 }
 
 if CTLDunit[unittype] then

@@ -7,7 +7,7 @@
 ft = {}
 ft.order = {'start', 'setup', 'night'}
 
-wpseq({ cur = 1, diff = 1, route = 't', })
+wpseq({enable=true, cur = 1, diff = 1, route = 't', })
 
 --#################################
 -- setup v0.1
