@@ -1,0 +1,251 @@
+dialog = {
+	["children"] = {
+		["containerPlugin"] = {
+			["children"] = {
+				["titleLabel"] = {
+					["params"] = {
+						["bounds"] = {
+							["h"] = 60,
+							["w"] = 220,
+							["x"] = 780,
+							["y"] = 20,
+						},
+						["enabled"] = true,
+						["text"] = "$SCRATCHPAD_TITLE",
+						["tooltip"] = "",
+						["visible"] = true,
+						["zindex"] = 0,
+					},
+					["skin"] = {
+						["params"] = {
+							["name"] = "staticOptionsTitleSkin",
+						},
+						["states"] = {
+							["released"] = {
+								[1] = {
+									["text"] = {
+										["font"] = "DejaVuLGCSansCondensed-BoldOblique.ttf",
+										["fontSize"] = 24,
+									},
+								},
+							},
+						},
+					},
+					["type"] = "Static",
+				},
+				["versionComment"] = {
+					["params"] = {
+						["bounds"] = {
+							["h"] = 15,
+							["w"] = 180,
+							["x"] = 805,
+							["y"] = 55,
+						},
+						["enabled"] = true,
+						["text"] = "$SCRATCHPAD_VERSION",
+						["tooltip"] = "",
+						["visible"] = true,
+						["zindex"] = 0,
+					},
+					["skin"] = {
+						["params"] = {
+							["name"] = "staticOptionsCommentSkin",
+						},
+						["states"] = {
+							["released"] = {
+								[1] = {
+									["text"] = {
+										["font"] = "DejaVuLGCSansCondensed.ttf",
+										["fontSize"] = 11,
+									},
+								},
+							},
+						},
+					},
+					["type"] = "Static",
+				},
+				["showUpdatesCheckbox"] = {
+					["params"] = {
+						["bounds"] = {
+							["h"] = 20,
+							["w"] = 110,
+							["x"] = 835,
+							["y"] = 85,
+						},
+						["enabled"] = true,
+						["state"] = true,
+						["tabOrder"] = 0,
+						["text"] = "$SCRATCHPAD_UPDATES",
+						["tooltip"] = "Check for Scratchpad updates on launch",
+						["visible"] = true,
+						["zindex"] = 0,
+					},
+					["skin"] = {
+						["params"] = {
+							["name"] = "checkBoxSkin_options",
+						},
+					},
+					["type"] = "CheckBox",
+				},
+				["flashKeysCheckbox"] = {
+					["params"] = {
+						["bounds"] = {
+							["h"] = 20,
+							["w"] = 160,
+							["x"] = 60,
+							["y"] = 110,
+						},
+						["enabled"] = true,
+						["state"] = true,
+						["tabOrder"] = 0,
+						["text"] = "$SCRATCHPAD_FLASHKEYS",
+						["tooltip"] = "Flash virtual keys when typing with keyboard",
+						["visible"] = true,
+						["zindex"] = 0,
+					},
+					["skin"] = {
+						["params"] = {
+							["name"] = "checkBoxSkin_options",
+						},
+					},
+					["type"] = "CheckBox",
+				},
+				["fontSizeLabel"] = {
+					["params"] = {
+						["bounds"] = {
+							["h"] = 20,
+							["w"] = 110,
+							["x"] = 60,
+							["y"] = 150,
+						},
+						["enabled"] = true,
+						["text"] = "$SCRATCHPAD_FONTSIZE",
+						["tooltip"] = "",
+						["visible"] = true,
+						["zindex"] = 0,
+					},
+					["skin"] = {
+						["params"] = {
+							["name"] = "staticOptionsCaptionSkin",
+						},
+					},
+					["type"] = "Static",
+				},
+				["fontSizeSlider"] = {
+					["params"] = {
+						["bounds"] = {
+							["h"] = 20,
+							["w"] = 120,
+							["x"] = 190,
+							["y"] = 146,
+						},
+						["enabled"] = true,
+						["pageStep"] = 10,
+						["range"] = {
+							["max"] = 18,
+							["min"] = 10,
+						},
+						["step"] = 1,
+						["tabOrder"] = 0,
+						["text"] = "",
+						["tooltip"] = "",
+						["value"] = 0,
+						["visible"] = true,
+						["zindex"] = 0,
+					},
+					["skin"] = {
+						["params"] = {
+							["name"] = "horzSliderSkin_options",
+						},
+					},
+					["type"] = "HorzSlider",
+				},
+				["hotkeyLabel"] = {
+					["params"] = {
+						["bounds"] = {
+							["h"] = 20,
+							["w"] = 120,
+							["x"] = 60,
+							["y"] = 190,
+						},
+						["enabled"] = true,
+						["text"] = "$SCRATCHPAD_HOTKEY",
+						["tooltip"] = "",
+						["visible"] = true,
+						["zindex"] = 0,
+					},
+					["skin"] = {
+						["params"] = {
+							["name"] = "staticOptionsCaptionSkin",
+						},
+					},
+					["type"] = "Static",
+				},
+				["hotkeyComboList"] = {
+					["params"] = {
+						["bounds"] = {
+							["h"] = 25,
+							["w"] = 120,
+							["x"] = 190,
+							["y"] = 190,
+						},
+						["enabled"] = true,
+						["tabOrder"] = 0,
+						["text"] = "",
+						["tooltip"] = "",
+						["visible"] = true,
+						["zindex"] = 0,
+					},
+					["skin"] = {
+						["params"] = {
+							["name"] = "comboListSkin_options",
+						},
+					},
+					["type"] = "ComboList",
+				},
+			},
+			["params"] = {
+				["bounds"] = {
+					["h"] = 800,
+					["w"] = 974,
+					["x"] = 0,
+					["y"] = 0,
+				},
+				["enabled"] = true,
+				["text"] = "",
+				["tooltip"] = "",
+				["visible"] = true,
+				["zindex"] = 2,
+			},
+			["skin"] = {
+				["params"] = {
+					["name"] = "panelSkin",
+				},
+			},
+			["type"] = "Panel",
+		},
+	},
+	["params"] = {
+		["bounds"] = {
+			["h"] = 851,
+			["w"] = 1135,
+			["x"] = 0,
+			["y"] = 0,
+		},
+		["draggable"] = true,
+		["enabled"] = true,
+		["hasCursor"] = true,
+		["lockFlow"] = false,
+		["modal"] = false,
+		["offscreen"] = false,
+		["resizable"] = false,
+		["text"] = "Scratchpad",
+		["zOrder"] = 0,
+	},
+	["skin"] = {
+		["params"] = {
+			["name"] = "windowSkin",
+		},
+	},
+	["type"] = "Window",
+}

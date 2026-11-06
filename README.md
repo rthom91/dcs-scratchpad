@@ -38,13 +38,13 @@ This is only available in single player or for servers that have _Allow Player E
 
 ## Extensions
 
-Scratchpad supports extensions. Most prominent use-case is to add a virtual keyboard. There are some example extensions in `Saved Games\DCS.openbeta\Scripts\Scratchpad\Extensions\Disabled\`. To
-enable any of them, copy the file over to `Saved Games\DCS.openbeta\Scripts\Scratchpad\Extensions\`.
+Scratchpad supports extensions. Most prominent use-case is to add a virtual keyboard. There are some example extensions in `Saved Games\DCS\Scripts\Scratchpad\Extensions\Disabled\`. To
+enable any of them, copy the file over to `Saved Games\DCS\Scripts\Scratchpad\Extensions\`.
 
 The available APIs to the extensions are:
 
 ```lua
--- Log to `Saved Games\DCS.openbeta\Logs\Scratchpad.log`
+-- Log to `Saved Games\DCS\Logs\Scratchpad.log`
 log(text)
 
 -- Format coordinates with `format` being either `DMS` or `DDM`, `isLat` `true` if the provided `d`

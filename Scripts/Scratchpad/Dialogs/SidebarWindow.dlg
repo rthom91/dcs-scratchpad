@@ -1,0 +1,93 @@
+dialog = {
+	["type"] = "Window",
+	["params"] = {
+		["bounds"] = {
+			[1] = {
+				["h"] = 70,
+				["w"] = 36,
+				["x"] = 0,
+				["y"] = 0,
+			},
+		},
+		["draggable"] = false,
+		["enabled"] = true,
+		["hasCursor"] = true,
+		["lockFlow"] = false,
+		["modal"] = false,
+		["offscreen"] = false,
+		["resizable"] = false,
+		["zOrder"] = 113,
+		["text"] = "",
+	},
+	["skin"] = {
+		["params"] = {
+			["headerHeight"] = 0,
+			["name"] = "windowSkin",
+		},
+		["states"] = {
+			["released"] = {
+				[1] = {
+					["bkg"] = {
+						["center_center"] = "0x00000000",
+					},
+				},
+			},
+			["focused"] = {
+				[1] = {
+					["bkg"] = {
+						["center_center"] = "0x00000000",
+					},
+				},
+			},
+			["hover"] = {
+				[1] = {
+					["bkg"] = {
+						["center_center"] = "0x00000000",
+					},
+				},
+			},
+		},
+	},
+	["children"] = {
+		["PagePrevButton"] = {
+			["params"] = {
+				["bounds"] = {
+					["h"] = 28,
+					["w"] = 32,
+					["x"] = 2,
+					["y"] = 2,
+				},
+				["enabled"] = true,
+				["text"] = "←",
+				["tooltip"] = "Previous Page",
+				["visible"] = true,
+			},
+			["skin"] = {
+				["params"] = {
+					["name"] = "buttonSkinAwacs",
+				},
+			},
+			["type"] = "Button",
+		},
+		["PageNextButton"] = {
+			["params"] = {
+				["bounds"] = {
+					["h"] = 28,
+					["w"] = 32,
+					["x"] = 2,
+					["y"] = 34,
+				},
+				["enabled"] = true,
+				["text"] = "→",
+				["tooltip"] = "Next Page",
+				["visible"] = true,
+			},
+			["skin"] = {
+				["params"] = {
+					["name"] = "buttonSkinAwacs",
+				},
+			},
+			["type"] = "Button",
+		},
+	},
+}
