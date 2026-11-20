@@ -832,6 +832,13 @@ return function(app)
 		if S.insertCoordsBtn and S.insertCoordsBtn.setText then
 			S.insertCoordsBtn:setText("+L/L")
 		end
+		S.savePageBtn = box.SaveButton
+		S.clearPageBtn = box.ClearButton
+		S.briefingBtn = box.BriefingButton
+		S.numLockButton = box.NumLockButton
+		S.keyboardToggleBtn = box.KeyboardButton
+		S.keypadToggleBtn = box.KeypadButton
+		S.extensionsBtn = box.ExtensionsButton
 		S.prevButton = box.ScratchpadPrevButton
 		S.nextButton = box.ScratchpadNextButton
 		local prevButton = S.prevButton
@@ -859,6 +866,15 @@ return function(app)
 		if S.sidebar.PageNextButton then
 			S.nextButton = S.sidebar.PageNextButton
 			nextButton = S.nextButton
+		end
+		if S.sidebar.AddPageButton then
+			S.addPageBtn = S.sidebar.AddPageButton
+		end
+		if S.sidebar.DeletePageButton then
+			S.deletePageBtn = S.sidebar.DeletePageButton
+		end
+		if S.sidebar.HelpButton then
+			S.helpBtn = S.sidebar.HelpButton
 		end
 		if box.ScratchpadPrevButton then
 			box.ScratchpadPrevButton:setVisible(false)
@@ -1197,35 +1213,27 @@ return function(app)
 		-- add extensions
 		local buttonSkin = prevButton:getSkin()
 
-		local addBtn = Button.new("P+")
-		addBtn:setBounds(2, 66, SIDEBAR_W - 4, 28)
-		addBtn:setSkin(buttonSkin)
-		addBtn:addMouseUpCallback(function()
-			app.pages.add()
-			if S.textarea and S.textarea.setFocused then
-				S.textarea:setFocused(true)
-			end
-		end)
-		S.sidebar:insertWidget(addBtn)
-		S.addPageBtn = addBtn
+		if S.addPageBtn then
+			S.addPageBtn:addMouseUpCallback(function()
+				app.pages.add()
+				if S.textarea and S.textarea.setFocused then
+					S.textarea:setFocused(true)
+				end
+			end)
+		end
 
-		local delBtn = Button.new("P-")
-		delBtn:setBounds(2, 100, SIDEBAR_W - 4, 28)
-		delBtn:setSkin(buttonSkin)
-		delBtn:addMouseUpCallback(function()
-			app.pages.delete()
-			if S.textarea and S.textarea.setFocused then
-				S.textarea:setFocused(true)
-			end
-		end)
-		S.sidebar:insertWidget(delBtn)
-		S.deletePageBtn = delBtn
+		if S.deletePageBtn then
+			S.deletePageBtn:addMouseUpCallback(function()
+				app.pages.delete()
+				if S.textarea and S.textarea.setFocused then
+					S.textarea:setFocused(true)
+				end
+			end)
+		end
 
-		local helpBtn = Button.new("?")
-		helpBtn:setBounds(2, 134, SIDEBAR_W - 4, 28)
-		helpBtn:setSkin(buttonSkin)
-		S.sidebar:insertWidget(helpBtn)
-		S.helpBtn = helpBtn
+		if S.helpBtn then
+			-- help callback attached later after helpBox is created
+		end
 
 		local helpLines = {
 			"Help",
@@ -1291,65 +1299,55 @@ return function(app)
 		helpWin:setVisible(false)
 		S.helpBox = helpWin
 
-		helpBtn:addMouseUpCallback(function()
-			if not S.helpBox then
-				return
-			end
-			local show = not S.helpBox:getVisible()
-			if show and S.helpBtn and S.sidebar then
-				local sx, sy = S.sidebar:getPosition()
-				local bx, by = S.helpBtn:getPosition()
-				S.helpBox:setPosition((sx or 0) + (bx or 0) + SIDEBAR_W + 4, (sy or 0) + (by or 0))
-			end
-			S.helpBox:setVisible(show)
-		end)
+		if S.helpBtn then
+			S.helpBtn:addMouseUpCallback(function()
+				if not S.helpBox then
+					return
+				end
+				local show = not S.helpBox:getVisible()
+				if show and S.helpBtn and S.sidebar then
+					local sx, sy = S.sidebar:getPosition()
+					local bx, by = S.helpBtn:getPosition()
+					S.helpBox:setPosition((sx or 0) + (bx or 0) + SIDEBAR_W + 4, (sy or 0) + (by or 0))
+				end
+				S.helpBox:setVisible(show)
+			end)
+		end
 
-		local clrBtn = Button.new("CLR")
-		clrBtn:setBounds(240, 0, 50, 20)
-		clrBtn:setSkin(buttonSkin)
-		clrBtn:addMouseUpCallback(function()
-			if S.textarea then
-				S.textarea:setText("")
-				updateSaveButton(true)
-			end
-		end)
-		box:insertWidget(clrBtn)
-		S.clearPageBtn = clrBtn
+		if S.clearPageBtn then
+			S.clearPageBtn:addMouseUpCallback(function()
+				if S.textarea then
+					S.textarea:setText("")
+					updateSaveButton(true)
+				end
+			end)
+		end
 
-		local nlBtn = Button.new("NL")
-		nlBtn:setBounds(0, 0, 32, 20)
-		nlBtn:setSkin(buttonSkin)
-		nlBtn:addMouseUpCallback(function()
-			if _G.ScratchpadToggleNumLock then
-				_G.ScratchpadToggleNumLock()
-			end
-		end)
-		box:insertWidget(nlBtn)
-		S.numLockButton = nlBtn
+		if S.numLockButton then
+			S.numLockButton:addMouseUpCallback(function()
+				if _G.ScratchpadToggleNumLock then
+					_G.ScratchpadToggleNumLock()
+				end
+			end)
+		end
 
-		local briefingBtn = Button.new("+Brief")
-		briefingBtn:setBounds(0, 0, 60, 20)
-		briefingBtn:setSkin(buttonSkin)
-		briefingBtn:addMouseUpCallback(function()
-			local desc = DCS.getMissionDescription and DCS.getMissionDescription() or ""
-			if desc == "" then
-				app.text.Text.new():insertTop("Mission briefing missing or not available.")
-				updateSaveButton(true)
-				return
-			end
-			app.text.Text.new():insertTop(desc)
-		end)
-		box:insertWidget(briefingBtn)
-		S.briefingBtn = briefingBtn
+		if S.briefingBtn then
+			S.briefingBtn:addMouseUpCallback(function()
+				local desc = DCS.getMissionDescription and DCS.getMissionDescription() or ""
+				if desc == "" then
+					app.text.Text.new():insertTop("Mission briefing missing or not available.")
+					updateSaveButton(true)
+					return
+				end
+				app.text.Text.new():insertTop(desc)
+			end)
+		end
 
-		local saveBtn = Button.new("Save")
-		saveBtn:setBounds(290, 0, 55, 20)
-		saveBtn:setSkin(buttonSkin)
-		saveBtn:addMouseUpCallback(function()
-			saveCurrentPage()
-		end)
-		box:insertWidget(saveBtn)
-		S.savePageBtn = saveBtn
+		if S.savePageBtn then
+			S.savePageBtn:addMouseUpCallback(function()
+				saveCurrentPage()
+			end)
+		end
 
 		layoutToolbar(420)
 
@@ -1581,25 +1579,21 @@ return function(app)
 		end
 
 		if S.keyboardPanel then
-			local kbBtn = Button.new("ABC")
-			kbBtn:setBounds(0, 0, 40, 20)
-			kbBtn:setSkin(buttonSkin)
-			kbBtn:addMouseUpCallback(function()
-				toggleKeyboard()
-			end)
-			box:insertWidget(kbBtn)
-			S.keyboardToggleBtn = kbBtn
-			kbBtn:setVisible(true)
-
-			local kpBtn = Button.new("123")
-			kpBtn:setBounds(0, 0, 40, 20)
-			kpBtn:setSkin(buttonSkin)
-			kpBtn:addMouseUpCallback(function()
-				toggleKeypad()
-			end)
-			box:insertWidget(kpBtn)
-			S.keypadToggleBtn = kpBtn
-			kpBtn:setVisible(true)
+			if S.keyboardToggleBtn then
+				S.keyboardToggleBtn:addMouseUpCallback(function()
+					toggleKeyboard()
+				end)
+				S.keyboardToggleBtn:setVisible(true)
+			end
+			if S.keypadToggleBtn then
+				S.keypadToggleBtn:addMouseUpCallback(function()
+					toggleKeypad()
+				end)
+				S.keypadToggleBtn:setVisible(true)
+			end
+		else
+			if S.keyboardToggleBtn then S.keyboardToggleBtn:setVisible(false) end
+			if S.keypadToggleBtn then S.keypadToggleBtn:setVisible(false) end
 		end
 
 		applyKeyboardVisibility()
@@ -1704,28 +1698,25 @@ return function(app)
 			extWin:setVisible(false)
 			S.extensionsBox = extWin
 
-			local extBtn = Button.new("Ext")
-			extBtn:setBounds(0, 0, 36, 20)
-			extBtn:setSkin(buttonSkin)
-			extBtn:addMouseUpCallback(function()
-				if not S.extensionsBox then
-					return
-				end
-				local show = not S.extensionsBox:getVisible()
-				if show then
-					local winX, winY = S.window:getPosition()
-					local toolbar = S.window and S.window.Box
-					local boxX, boxY = 0, 0
-					if toolbar and toolbar.getPosition then
-						boxX, boxY = toolbar:getPosition()
+			if S.extensionsBtn then
+				S.extensionsBtn:addMouseUpCallback(function()
+					if not S.extensionsBox then
+						return
 					end
-					local bx, by = S.extensionsBtn and S.extensionsBtn:getPosition() or 0, 0
-					S.extensionsBox:setPosition((winX or 0) + (boxX or 0) + (bx or 0), (winY or 0) + (boxY or 0) + (by or 0) + TITLE_H + 24)
-				end
-				S.extensionsBox:setVisible(show)
-			end)
-			box:insertWidget(extBtn)
-			S.extensionsBtn = extBtn
+					local show = not S.extensionsBox:getVisible()
+					if show then
+						local winX, winY = S.window:getPosition()
+						local toolbar = S.window and S.window.Box
+						local boxX, boxY = 0, 0
+						if toolbar and toolbar.getPosition then
+							boxX, boxY = toolbar:getPosition()
+						end
+						local bx, by = S.extensionsBtn and S.extensionsBtn:getPosition() or 0, 0
+						S.extensionsBox:setPosition((winX or 0) + (boxX or 0) + (bx or 0), (winY or 0) + (boxY or 0) + (by or 0) + TITLE_H + 24)
+					end
+					S.extensionsBox:setVisible(show)
+				end)
+			end
 			layoutToolbar(420)
 		end
 

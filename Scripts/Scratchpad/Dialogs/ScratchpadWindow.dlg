@@ -6,8 +6,8 @@ dialog = {
 				["h"] = 200,
 				["w"] = 350,
 				["x"] = 0,
-				["y"] = 0,
-			},
+				["y"] = 0
+			}
 		},
 		["draggable"] = true,
 		["enabled"] = true,
@@ -17,11 +17,11 @@ dialog = {
 		["offscreen"] = false,
 		["resizable"] = true,
 		["zOrder"] = 112,
-		["text"] = "Scratchpad",
+		["text"] = "Scratchpad"
 	},
 	["skin"] = {
 		["params"] = {
-			["name"] = "windowSkin",
+			["name"] = "windowSkin"
 		},
 		["skins"] = {
 			["header"] = {
@@ -32,41 +32,41 @@ dialog = {
 							["bottom"] = 2,
 							["left"] = 2,
 							["right"] = 2,
-							["top"] = 2,
-						},
+							["top"] = 2
+						}
 					},
 					["states"] = {
 						["released"] = {
 							[1] = {
 								["bkg"] = {
-									["center_center"] = "0x00000066",
+									["center_center"] = "0x00000066"
 								},
 								["text"] = {
-									["color"] = "0xffffffaa",
-								},
+									["color"] = "0xffffffaa"
+								}
 							},
 							[2] = {
 								["bkg"] = {
-									["center_center"] = "0x00000066",
+									["center_center"] = "0x00000066"
 								},
 								["text"] = {
-									["color"] = "0xffffffaa",
-								},
-							},
-						},
-					},
-				},
-			},
+									["color"] = "0xffffffaa"
+								}
+							}
+						}
+					}
+				}
+			}
 		},
 		["states"] = {
 			["released"] = {
 				[1] = {
 					["bkg"] = {
-						["center_center"] = "0x00000000",
-					},
-				},
-			},
-		},
+						["center_center"] = "0x00000000"
+					}
+				}
+			}
+		}
 	},
 	["children"] = {
 		["ScratchpadEditBox"] = {
@@ -76,7 +76,7 @@ dialog = {
 					["h"] = 180,
 					["w"] = 350,
 					["x"] = 0,
-					["y"] = 0,
+					["y"] = 0
 				},
 				["enabled"] = true,
 				["multiline"] = true,
@@ -88,27 +88,27 @@ dialog = {
 				["textWrapping"] = true,
 				["tooltip"] = "",
 				["visible"] = true,
-				["zindex"] = 0,
+				["zindex"] = 0
 			},
 			["skin"] = {
 				["params"] = {
-					["name"] = "editBoxNew",
+					["name"] = "editBoxNew"
 				},
 				["states"] = {
 					["released"] = {
 						[1] = {
 							["bkg"] = {
-								["center_center"] = "0x00000080",
+								["center_center"] = "0x00000080"
 							},
 							["text"] = {
 								["font"] = "CONSOLA.TTF",
-								["lineHeight"] = 10,
-							},
-						},
-					},
-				},
+								["lineHeight"] = 10
+							}
+						}
+					}
+				}
 			},
-			["type"] = "EditBox",
+			["type"] = "EditBox"
 		},
 		["Box"] = {
 			["children"] = {
@@ -118,21 +118,21 @@ dialog = {
 							["h"] = 20,
 							["w"] = 50,
 							["x"] = 0,
-							["y"] = 0,
+							["y"] = 0
 						},
 						["enabled"] = true,
 						["tabOrder"] = 0,
 						["text"] = "←",
-						["tooltip"] = "Previous Page",
+						["tooltip"] = "",
 						["visible"] = true,
-						["zindex"] = 1,
+						["zindex"] = 1
 					},
 					["skin"] = {
 						["params"] = {
-							["name"] = "buttonSkinAwacs",
-						},
+							["name"] = "buttonSkinAwacs"
+						}
 					},
-					["type"] = "Button",
+					["type"] = "Button"
 				},
 				["ScratchpadNextButton"] = {
 					["params"] = {
@@ -140,21 +140,21 @@ dialog = {
 							["h"] = 20,
 							["w"] = 50,
 							["x"] = 55,
-							["y"] = 0,
+							["y"] = 0
 						},
 						["enabled"] = true,
 						["tabOrder"] = 0,
 						["text"] = "→",
-						["tooltip"] = "Next Page",
+						["tooltip"] = "",
 						["visible"] = true,
-						["zindex"] = 1,
+						["zindex"] = 1
 					},
 					["skin"] = {
 						["params"] = {
-							["name"] = "buttonSkinAwacs",
-						},
+							["name"] = "buttonSkinAwacs"
+						}
 					},
-					["type"] = "Button",
+					["type"] = "Button"
 				},
 				["ScratchpadCrosshairCheckBox"] = {
 					["params"] = {
@@ -168,7 +168,7 @@ dialog = {
 						["state"] = false,
 						["tabOrder"] = 140,
 						["text"] = "",
-						["tooltip"] = "",
+						["tooltip"] = "Toggle coordinate crosshair",
 						["visible"] = true,
 						["zindex"] = 0,
 					},
@@ -185,42 +185,189 @@ dialog = {
 							["h"] = 20,
 							["w"] = 50,
 							["x"] = 145,
-							["y"] = 0,
+							["y"] = 0
 						},
 						["enabled"] = true,
 						["tabOrder"] = 0,
 						["text"] = "+L/L",
-						["tooltip"] = "Insert Coordinates",
-						["visible"] = false,
-						["zindex"] = 1,
+						["tooltip"] = "Insert coordinates from F10 map",
+						["visible"] = true,
+						["zindex"] = 1
 					},
 					["skin"] = {
 						["params"] = {
-							["name"] = "buttonSkinAwacs",
-						},
+							["name"] = "buttonSkinAwacs"
+						}
 					},
-					["type"] = "Button",
+					["type"] = "Button"
 				},
+				["SaveButton"] = {
+					["params"] = {
+						["bounds"] = {
+							["h"] = 20,
+							["w"] = 55,
+							["x"] = 0,
+							["y"] = 0
+						},
+						["enabled"] = true,
+						["text"] = "Save",
+						["tooltip"] = "Save page",
+						["visible"] = true,
+						["zindex"] = 1
+					},
+					["skin"] = {
+						["params"] = {
+							["name"] = "buttonSkinAwacs"
+						}
+					},
+					["type"] = "Button"
+				},
+				["ClearButton"] = {
+					["params"] = {
+						["bounds"] = {
+							["h"] = 20,
+							["w"] = 44,
+							["x"] = 0,
+							["y"] = 0
+						},
+						["enabled"] = true,
+						["text"] = "CLR",
+						["tooltip"] = "Clear page",
+						["visible"] = true,
+						["zindex"] = 1
+					},
+					["skin"] = {
+						["params"] = {
+							["name"] = "buttonSkinAwacs"
+						}
+					},
+					["type"] = "Button"
+				},
+				["BriefingButton"] = {
+					["params"] = {
+						["bounds"] = {
+							["h"] = 20,
+							["w"] = 60,
+							["x"] = 0,
+							["y"] = 0
+						},
+						["enabled"] = true,
+						["text"] = "+Brief",
+						["tooltip"] = "Insert mission briefing",
+						["visible"] = true,
+						["zindex"] = 1
+					},
+					["skin"] = {
+						["params"] = {
+							["name"] = "buttonSkinAwacs"
+						}
+					},
+					["type"] = "Button"
+				},
+				["NumLockButton"] = {
+					["params"] = {
+						["bounds"] = {
+							["h"] = 20,
+							["w"] = 32,
+							["x"] = 0,
+							["y"] = 0
+						},
+						["enabled"] = true,
+						["text"] = "NL",
+						["tooltip"] = "Toggle NumLock",
+						["visible"] = true,
+						["zindex"] = 1
+					},
+					["skin"] = {
+						["params"] = {
+							["name"] = "buttonSkinAwacs"
+						}
+					},
+					["type"] = "Button"
+				},
+				["KeyboardButton"] = {
+					["params"] = {
+						["bounds"] = {
+							["h"] = 20,
+							["w"] = 40,
+							["x"] = 0,
+							["y"] = 0
+						},
+						["enabled"] = true,
+						["text"] = "ABC",
+						["tooltip"] = "Show/hide keyboard",
+						["visible"] = true,
+						["zindex"] = 1
+					},
+					["skin"] = {
+						["params"] = {
+							["name"] = "buttonSkinAwacs"
+						}
+					},
+					["type"] = "Button"
+				},
+				["KeypadButton"] = {
+					["params"] = {
+						["bounds"] = {
+							["h"] = 20,
+							["w"] = 40,
+							["x"] = 0,
+							["y"] = 0
+						},
+						["enabled"] = true,
+						["text"] = "123",
+						["tooltip"] = "Show/hide keypad",
+						["visible"] = true,
+						["zindex"] = 1
+					},
+					["skin"] = {
+						["params"] = {
+							["name"] = "buttonSkinAwacs"
+						}
+					},
+					["type"] = "Button"
+				},
+				["ExtensionsButton"] = {
+					["params"] = {
+						["bounds"] = {
+							["h"] = 20,
+							["w"] = 36,
+							["x"] = 0,
+							["y"] = 0
+						},
+						["enabled"] = true,
+						["text"] = "Ext",
+						["tooltip"] = "Show/hide extensions",
+						["visible"] = true,
+						["zindex"] = 1
+					},
+					["skin"] = {
+						["params"] = {
+							["name"] = "buttonSkinAwacs"
+						}
+					},
+					["type"] = "Button"
+				}
 			},
 			["params"] = {
 				["bounds"] = {
 					["h"] = 20,
 					["w"] = 195,
 					["x"] = 0,
-					["y"] = 180,
+					["y"] = 180
 				},
 				["enabled"] = true,
 				["text"] = "",
 				["tooltip"] = "",
 				["visible"] = true,
-				["zindex"] = 0,
+				["zindex"] = 0
 			},
 			["skin"] = {
 				["params"] = {
-					["name"] = "panelSkin",
-				},
+					["name"] = "panelSkin"
+				}
 			},
-			["type"] = "Panel",
-		},
-	},
+			["type"] = "Panel"
+		}
+	}
 }

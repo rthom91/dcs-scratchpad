@@ -3,7 +3,7 @@ dialog = {
 	["params"] = {
 		["bounds"] = {
 			[1] = {
-				["h"] = 70,
+				["h"] = 180,
 				["w"] = 36,
 				["x"] = 0,
 				["y"] = 0,
@@ -49,17 +49,17 @@ dialog = {
 		},
 	},
 	["children"] = {
-		["PagePrevButton"] = {
+		["PageNextButton"] = {
 			["params"] = {
 				["bounds"] = {
 					["h"] = 28,
 					["w"] = 32,
 					["x"] = 2,
-					["y"] = 2,
+					["y"] = 4,
 				},
 				["enabled"] = true,
-				["text"] = "←",
-				["tooltip"] = "Previous Page",
+				["text"] = "→",
+				["tooltip"] = "Next page",
 				["visible"] = true,
 			},
 			["skin"] = {
@@ -69,17 +69,77 @@ dialog = {
 			},
 			["type"] = "Button",
 		},
-		["PageNextButton"] = {
+		["PagePrevButton"] = {
 			["params"] = {
 				["bounds"] = {
 					["h"] = 28,
 					["w"] = 32,
 					["x"] = 2,
-					["y"] = 34,
+					["y"] = 36,
 				},
 				["enabled"] = true,
-				["text"] = "→",
-				["tooltip"] = "Next Page",
+				["text"] = "←",
+				["tooltip"] = "Previous page",
+				["visible"] = true,
+			},
+			["skin"] = {
+				["params"] = {
+					["name"] = "buttonSkinAwacs",
+				},
+			},
+			["type"] = "Button",
+		},
+		["AddPageButton"] = {
+			["params"] = {
+				["bounds"] = {
+					["h"] = 28,
+					["w"] = 32,
+					["x"] = 2,
+					["y"] = 68,
+				},
+				["enabled"] = true,
+				["text"] = "P+",
+				["tooltip"] = "Add page",
+				["visible"] = true,
+			},
+			["skin"] = {
+				["params"] = {
+					["name"] = "buttonSkinAwacs",
+				},
+			},
+			["type"] = "Button",
+		},
+		["DeletePageButton"] = {
+			["params"] = {
+				["bounds"] = {
+					["h"] = 28,
+					["w"] = 32,
+					["x"] = 2,
+					["y"] = 100,
+				},
+				["enabled"] = true,
+				["text"] = "P-",
+				["tooltip"] = "Delete page",
+				["visible"] = true,
+			},
+			["skin"] = {
+				["params"] = {
+					["name"] = "buttonSkinAwacs",
+				},
+			},
+			["type"] = "Button",
+		},
+		["HelpButton"] = {
+			["params"] = {
+				["bounds"] = {
+					["h"] = 28,
+					["w"] = 32,
+					["x"] = 2,
+					["y"] = 132,
+				},
+				["enabled"] = true,
+				["text"] = "?",
+				["tooltip"] = "Show help",
 				["visible"] = true,
 			},
 			["skin"] = {
