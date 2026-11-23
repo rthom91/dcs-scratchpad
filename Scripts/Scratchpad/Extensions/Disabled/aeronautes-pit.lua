@@ -852,12 +852,38 @@ function convertformatCoords(result)
 	return result
 end
 
+local function loadScratchpadModules()
+	local path = lfs.writedir() .. [[Scripts\Scratchpad\units.lua]]
+	local chunk = loadfile(path)
+	if not chunk then
+		return nil
+	end
+	local ok, result = pcall(chunk)
+	if ok and type(result) == "table" then
+		return result
+	end
+	return nil
+end
+
+local scratchpadModules = loadScratchpadModules()
+
 function coordsType(unit)
+	if scratchpadModules and scratchpadModules[unit] then
+		local list = scratchpadModules[unit]
+		-- Entry format is the last lat/long spec (most precise).
+		for i = #list, 1, -1 do
+			local spec = list[i]
+			if spec.format == "DMS" or spec.format == "DDM" then
+				return spec
+			end
+		end
+	end
+
 	if LT[unit] and LT[unit].coordsType then
 		return LT[unit].coordsType
 	end
 
-	loglocal('aeronautespit coordsType: not found in LT, ' .. tostring(unit))
+	loglocal('aeronautespit coordsType: not found, ' .. tostring(unit))
 	return nil
 end
 

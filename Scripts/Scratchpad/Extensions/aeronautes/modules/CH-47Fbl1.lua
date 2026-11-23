@@ -10,10 +10,6 @@ wpseq({ cur = 1, diff = 1 })
 
 local ft = {}
 
-ft.scratchpadFormats = {
-	DDM = { precision = 3, lonDegreesWidth = 3 },
-	MGRS = true,
-}
 ft.order = { 'setup', 'night' }
 
 -- =================
@@ -58,7 +54,6 @@ end
 ft.lt = {
 	notes = 'LatLon requires right CDU on IDX > PROC/PATT > ACP LIST > ACP page',
 	dirname = lfs.currentdir() .. [[Mods\aircraft\CH-47F]],
-	coordsType = { format = 'DDM', precision = 3, lonDegreesWidth = 3 },
 	wpentry = '<LATLON!ALT#',
 
 	llconvert = function(result)

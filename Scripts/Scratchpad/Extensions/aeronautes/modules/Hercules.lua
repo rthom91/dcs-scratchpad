@@ -26,9 +26,6 @@ wpseq({ enable = true, cur = 1, diff = 1 })
 
 local ft = {}
 
-ft.scratchpadFormats = {
-	DDM = { precision = 3, lonDegreesWidth = 3 },
-}
 ft.order = { 'start', 'takeoff', 'landing', 'night', 'pylon', 'cannon' }
 
 --[[
@@ -270,14 +267,13 @@ function findbase(base)
 	end
 end
 
-function L2DDM(L)
-	-- TODO
-end
-
 function showpos()
 	local a = Export.LoGetCameraPosition()
 	local b = Export.LoLoCoordinatesToGeoCoordinates(a.x, a.z)
-	loglocal(net.lua2json(formatCoord({ format = 'DDM', lonDegreeWidth = 3 }, false, b.longitude, '')))
+	local cType = coordsType('Hercules')
+	if cType then
+		loglocal(net.lua2json(formatCoord(cType, false, b.longitude, '')))
+	end
 end
 
 -- showpos()
@@ -310,7 +306,6 @@ end
 
 ft.lt = {
 	notes = [[Waypoint input sets the current point. No sequencing implemented.]],
-	coordsType = { format = 'DDM', precision = 3, lonDegreesWidth = 3 },
 	wpentry = 'LATeLONf',
 
 	prewp = function()

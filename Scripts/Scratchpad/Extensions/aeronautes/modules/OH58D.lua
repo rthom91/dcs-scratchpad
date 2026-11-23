@@ -10,10 +10,6 @@ wpseq({ enable = true, cur = 1, diff = 1 })
 
 local ft = {}
 
-ft.scratchpadFormats = {
-	DDM = { precision = 2, lonDegreesWidth = 3 },
-	MGRS = true,
-}
 ft.order = { 'start', 'setup' }
 
 -- =================
@@ -117,7 +113,6 @@ end
 
 ft.lt = {
 	notes = [[Waypoint input requires the New WP page and LatLon mode. Store MFD button automatically increments current wp number.]],
-	coordsType = { format = 'DDM', precision = 2, lonDegreesWidth = 3 },
 	wpentry = '@~LAT_#~LON_$~ALT_',
 
 	prewp = function(arg)

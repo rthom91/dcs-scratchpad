@@ -12,10 +12,6 @@ wpseq({ enable = true, cur = 1, diff = 1 })
 
 local ft = {}
 
-ft.scratchpadFormats = {
-	DMS = { precision = 0, lonDegreesWidth = 3 },
-	MGRS = true,
-}
 ft.order = { 'start', 'setup', 'maptoggle', 'night' }
 
 -- =================
@@ -163,7 +159,6 @@ end
 
 ft.lt = {
 	notes = [[Waypoint input requires DATA page. Adds new wp to the list (wp#77).]],
-	coordsType = { format = 'DMS', precision = 0, lonDegreesWidth = 3 },
 	wpentry = 'LATeLONe#ALTe',
 
 	prewp = function()

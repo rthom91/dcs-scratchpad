@@ -12,11 +12,6 @@ wpseq({ cur = -1, diff = 1 })
 local ft = {}
 
 ft.bingo = 2000
-ft.scratchpadFormats = {
-	DMS = true,
-	DDM = { precision = 4 },
-	MGRS = true,
-}
 ft.order = { 'start', 'night', 'stores' }
 
 -- =================
@@ -248,7 +243,6 @@ end
 ft.lt = {
 	notes = [[Waypoint input requires HSI DATA menu with precise on center AMPCD.
 Default increments from the current waypoint. Control with wpseq({diff=}).]],
-	coordsType = { format = 'DDM', precision = 4 },
 	wpentry = 'faLAT LON caALT ',
 	prewp = function()
 		if not wps.enable then return end

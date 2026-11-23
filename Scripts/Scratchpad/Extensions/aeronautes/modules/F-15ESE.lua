@@ -14,10 +14,6 @@ wpseq({ enable = true, cur = 1, diff = 1, route = '.B', menus = 'mlj' })
 
 local ft = {}
 
-ft.scratchpadFormats = {
-	DDM = { precision = 3, lonDegreesWidth = 3 },
-	MGRS = true,
-}
 ft.order = { 'start', 'mpd', 'A/Gload', 'night', 'day', 'route' }
 
 -- =================
@@ -429,7 +425,6 @@ end
 
 ft.lt = {
 	notes = [[Waypoint input requires UFC be in point data submenu. WP sequencing supported.]],
-	coordsType = { format = 'DDM', precision = 3, lonDegreesWidth = 3 },
 	wpentry = 'LATbLONcALTg',
 	nextroute = { ['.A'] = '.B', ['.B'] = '.C', ['.C'] = 'Base', Base = '.A' },
 	prewp = function()

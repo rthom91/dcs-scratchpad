@@ -59,6 +59,7 @@ local function loadScratchpad()
 		"Scratchpad.log",
 		"Scratchpad.pages",
 		"Scratchpad.text",
+		"Scratchpad.units",
 		"Scratchpad.update",
 		"Scratchpad.window",
 	}

@@ -7,10 +7,6 @@
 
 local ft = {}
 
-ft.scratchpadFormats = {
-	DDM = true,
-	MGRS = true,
-}
 ft.order = { 'start' }
 
 -- =================

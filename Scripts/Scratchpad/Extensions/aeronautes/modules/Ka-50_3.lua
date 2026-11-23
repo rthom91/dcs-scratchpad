@@ -11,9 +11,6 @@ wpseq({ enable = true, cur = 1, diff = 1, route = 't' })
 
 local ft = {}
 
-ft.scratchpadFormats = {
-	DDM = { precision = 1, lonDegreesWidth = 3, showNegative = true },
-}
 ft.order = { 'start', 'setup', 'night' }
 
 -- =================
@@ -279,7 +276,6 @@ end
 
 ft.lt = {
 	notes = [[Waypoint input starts at target 1 and increments. The WP type can be changed with wpseq({route=})]],
-	coordsType = { format = 'DDM', precision = 1, lonDegreesWidth = 3 },
 	wpentry = 'LATeLONe',
 	customfn = Moduledir .. 'Ka-50_3.lua',
 

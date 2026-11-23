@@ -9,10 +9,6 @@
 
 local ft = {}
 
-ft.scratchpadFormats = {
-	DDM = { lonDegreesWidth = 3 },
-	MGRS = true,
-}
 ft.order = { 'HH', 'HHCancel', 'NAV' }
 
 -- =================
@@ -103,7 +99,6 @@ end
 
 ft.lt = {
 	notes = [[Place holder for JTAC slot]],
-	coordsType = { format = 'DDM', lonDegreesWidth = 3 },
 
 	prewp = function(input)
 	end,

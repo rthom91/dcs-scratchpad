@@ -10,10 +10,6 @@ wpseq({ cur = 3, diff = 1 })
 
 local ft = {}
 
-ft.scratchpadFormats = {
-	DDM = true,
-	MGRS = true,
-}
 ft.order = { 'start', 'setup' }
 
 -- =================
@@ -82,7 +78,6 @@ end
 
 ft.lt = {
 	notes = [[Waypoint input requires WAYPT menu, L/L mode. Default to LSK 7 to increment wp number]],
-	coordsType = { format = 'DDM', precision = 3, lonDegreesWidth = 3 },
 	wpentry = 'LAT#LON$ALT@',
 	customfn = Moduledir .. 'A-10C_2.lua',
 

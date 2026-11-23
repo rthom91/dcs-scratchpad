@@ -12,10 +12,6 @@ wpseq({ menus = 'r4', cur = -1, diff = 1 })
 
 local ft = {}
 
-ft.scratchpadFormats = {
-	DDM = { lonDegreesWidth = 3 },
-	MGRS = true,
-}
 ft.order = { 'start', 'setup', 'WIP-mfd', 'DEPREC-fence' }
 
 -- =================
@@ -292,7 +288,6 @@ end
 
 ft.lt = {
 	notes = [[Waypoint input]],
-	coordsType = { format = 'DDM', lonDegreesWidth = 3 },
 	menus = 'r4',
 	wpentry = 'LATedLONedALTe',
 	prewp = function()

@@ -1,47 +1,14 @@
 local Terrain = require("terrain")
-local lfs = require("lfs")
+local aircraft = require("Scratchpad.units")
 
-local MODULES_DIR = lfs.writedir() .. [[Scripts\Scratchpad\Extensions\aeronautes\modules\]]
-local DEFAULT_FORMATS = { DMS = true, DDM = true, MGRS = true }
--- Prefixes that fall back to a shared module file when no exact match exists
-local PREFIXES = { "A-10C", "F-14", "SA342" }
-
-local function loadModuleFormats(name)
-	local path = MODULES_DIR .. name .. ".lua"
-	local chunk = loadfile(path)
-	if not chunk then
-		return nil
-	end
-
-	local ok, result = pcall(chunk)
-	if not ok or type(result) ~= "table" then
-		return nil
-	end
-
-	return result.scratchpadFormats
-		or (result.lt and result.lt.scratchpadFormats)
-		or nil
-end
-
-local function getAircraftFormats()
-	local ac = DCS.getPlayerUnitType() or ""
-
-	local formats = loadModuleFormats(ac)
-	if formats then
-		return formats
-	end
-
-	for _, prefix in ipairs(PREFIXES) do
-		if ac:sub(1, #prefix) == prefix then
-			formats = loadModuleFormats(prefix)
-			if formats then
-				return formats
-			end
-		end
-	end
-
-	return DEFAULT_FORMATS
-end
+local DEFAULT = {
+	{ format = "METRIC" },
+	{ format = "DMS", precision = 0 },
+	{ format = "DMS", precision = 3 },
+	{ format = "DDM", precision = 3 },
+	{ format = "DDM", precision = 4 },
+	{ format = "MGRS" },
+}
 
 local function roundTo(value, places)
 	local factor = 10 ^ places
@@ -56,6 +23,10 @@ local function splitHemisphere(d, isLat)
 	end
 end
 
+-- format: "DMS" | "DDM" | "DD"
+-- opts: precision, lonDegreesWidth, showNegative
+-- showNegative = true  -> civilian signed degrees, no hemisphere letter
+-- showNegative = false -> military hemisphere letter (N/S/E/W)
 local function formatCoord(format, isLat, d, opts)
 	opts = type(opts) == "table" and opts or {}
 
@@ -64,6 +35,9 @@ local function formatCoord(format, isLat, d, opts)
 	local m = (absD - g) * 60
 
 	local precision = opts.precision or 3
+	if precision < 0 then
+		precision = 0
+	end
 	local useNegative = opts.showNegative == true
 	local degreesWidth = (not isLat and opts.lonDegreesWidth) or 2
 
@@ -76,7 +50,25 @@ local function formatCoord(format, isLat, d, opts)
 		displayHemi = ""
 	end
 
-	if format == "DMS" then
+	-- Lua %0Nd counts the sign. Pad so digit count stays stable.
+	local function widthFor(deg)
+		if useNegative and deg < 0 then
+			return degreesWidth + 1
+		end
+		return degreesWidth
+	end
+
+	-- No leading space when the hemisphere letter is omitted.
+	local function hemiSep()
+		if displayHemi == "" then
+			return ""
+		end
+		return " "
+	end
+
+	local fmt = string.upper(tostring(format or "DD"))
+
+	if fmt == "DMS" then
 		m = math.floor(m)
 		local s = absD * 3600 - g * 3600 - m * 60
 		s = roundTo(s, precision)
@@ -94,14 +86,15 @@ local function formatCoord(format, isLat, d, opts)
 			end
 		end
 
-		if useNegative and displayG < 0 then
-			degreesWidth = degreesWidth + 1
-		end
+		-- Width must count the decimal point, or single-digit seconds lose the leading zero.
+		local secWidth = precision == 0 and 2 or (precision + 3)
+		local secFmt = "%0" .. secWidth .. "." .. precision .. "f"
+		return string.format(
+			"%s%s%0" .. widthFor(displayG) .. "d°%02d'" .. secFmt .. '"',
+			displayHemi, hemiSep(), displayG, m, s
+		)
 
-		local secFmt = "%0" .. (precision + 2) .. "." .. precision .. "f"
-		return string.format("%s %0" .. degreesWidth .. "d°%02d'" .. secFmt .. '"', displayHemi, displayG, m, s)
-
-	elseif format == "DDM" then
+	elseif fmt == "DDM" then
 		m = roundTo(m, precision)
 		if m >= 60 - 1e-9 then
 			m = 0
@@ -112,17 +105,26 @@ local function formatCoord(format, isLat, d, opts)
 			end
 		end
 
-		if useNegative and displayG < 0 then
-			degreesWidth = degreesWidth + 1
-		end
-
 		local minFmt = "%0" .. (precision + 3) .. "." .. precision .. "f"
-		return string.format("%s %0" .. degreesWidth .. "d°" .. minFmt .. "'", displayHemi, displayG, m)
+		return string.format(
+			"%s%s%0" .. widthFor(displayG) .. "d°" .. minFmt .. "'",
+			displayHemi, hemiSep(), displayG, m
+		)
 
 	else
+		-- DD: civilian signed decimal degrees.
 		local signed = (hemi == "S" or hemi == "W") and -absD or absD
-		return string.format("%.6f", signed)
+		local places = opts.precision or 6
+		if places < 0 then
+			places = 0
+		end
+		return string.format("%." .. places .. "f", signed)
 	end
+end
+
+
+local function formatsFor(ac)
+	return aircraft[ac] or DEFAULT
 end
 
 local function insertCoordinates(app)
@@ -135,26 +137,20 @@ local function insertCoordinates(app)
 	local S = app.state
 	local cam = Export.LoGetCameraPosition()
 	if not cam or not cam.p then
-		if app and app.log then
-			app.log("insertCoordinates: no camera position")
-		end
+		log("insertCoordinates: no camera position")
 		return
 	end
 	local pos = cam.p
 
 	local ok, alt = pcall(Terrain.GetSurfaceHeightWithSeabed, pos.x, pos.z)
 	if not ok then
-		if app and app.log then
-			app.log("insertCoordinates: GetSurfaceHeightWithSeabed failed: " .. tostring(alt))
-		end
+		log("insertCoordinates: GetSurfaceHeightWithSeabed failed: " .. tostring(alt))
 		return
 	end
 
 	local ok2, lat, lon = pcall(Terrain.convertMetersToLatLon, pos.x, pos.z)
 	if not ok2 then
-		if app and app.log then
-			app.log("insertCoordinates: convertMetersToLatLon failed: " .. tostring(lat))
-		end
+		log("insertCoordinates: convertMetersToLatLon failed: " .. tostring(lat))
 		return
 	end
 
@@ -163,23 +159,39 @@ local function insertCoordinates(app)
 		mgrs = ""
 	end
 
-	local types = getAircraftFormats()
+	local types = formatsFor(DCS.getPlayerUnitType() or "")
 	local lines = {}
 
-	if types.DMS then
-		lines[#lines + 1] = formatCoord("DMS", true, lat, types.DMS)
-						 .. ", "
-						 .. formatCoord("DMS", false, lon, types.DMS)
+	for _, spec in ipairs(types) do
+		local fmt = spec.format
+		if fmt == "METRIC" then
+			lines[#lines + 1] = string.format(
+				"X%+09d Z%+09d",
+				math.floor(pos.x + 0.5),
+				math.floor(pos.z + 0.5)
+			)
+		elseif fmt == "MGRS" then
+			if mgrs and mgrs ~= "" then
+				local digits = spec.precision or 10
+				if digits == 6 or digits == 8 then
+					local grid, e, n = mgrs:match("^(.+)%s+(%d%d%d%d%d)%s+(%d%d%d%d%d)$")
+					if grid and e and n then
+						local take = (digits == 6) and 3 or 4
+						lines[#lines + 1] = grid .. " " .. e:sub(1, take) .. " " .. n:sub(1, take)
+					else
+						lines[#lines + 1] = mgrs
+					end
+				else
+					lines[#lines + 1] = mgrs
+				end
+			end
+		else
+			lines[#lines + 1] = formatCoord(fmt, true, lat, spec)
+				.. ", "
+				.. formatCoord(fmt, false, lon, spec)
+		end
 	end
-	if types.DDM then
-		lines[#lines + 1] = formatCoord("DDM", true, lat, types.DDM)
-						 .. ", "
-						 .. formatCoord("DDM", false, lon, types.DDM)
-	end
-	if types.MGRS then
-		lines[#lines + 1] = mgrs
-	end
-	lines[#lines + 1] = string.format("%.0fm, %.0fft", alt, alt * 3.28084)
+	lines[#lines + 1] = string.format("%.0fm / %.0fft", alt, alt * 3.28084)
 
 	local text = app.text.Text.new()
 	text:insertBelow(table.concat(lines, "\n") .. "\n")
@@ -194,7 +206,6 @@ end
 return function(app)
 	return {
 		format = formatCoord,
-		type = getAircraftFormats,
 		insert = function()
 			insertCoordinates(app)
 		end,
