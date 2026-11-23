@@ -109,8 +109,4 @@ return {
 		{ format = "DDM", lonDegreesWidth = 3 },
 		{ format = "MGRS" },
 	},
-	-- Community
-	["Hercules"] = {
-		{ format = "DDM", precision = 3, lonDegreesWidth = 3 },
-	},
 }

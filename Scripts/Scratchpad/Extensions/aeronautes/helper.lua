@@ -94,7 +94,7 @@ has its own particular sequence of input. The API for this includes
 wp(), wpseq(), press() and the UI buttons LatLon and wp.
 
 * Waypoint input is currently supported for A-10C, AV-8B, CH-47,
-F-15E, F-16C, FA-18C, Hercules (Anubis), Ka-50_3, OH-58.
+F-15E, F-16C, FA-18C, Ka-50, OH-58.
 
 - 5. Customizations are higher level capabilities that utilize any
 combination of the above features. These are separated per module in
@@ -104,8 +104,8 @@ can modify these yourself to make your own customizations for your
 aircraft. They can be utilized by clicking on the function buttons,
 1, 2, ...
 
-* Customizations are provided for A-10C, AV8, CH-47, F-15E, F-16C,
-FA-18C, Hercules (Anubis), Ka-50_3, Mi-8, Mi-24, OH-58, Combined Arms and
+* Customizations are provided for A-10C, AV-8B, CH-47, F-15E, F-16C,
+F/A-18C, Ka-50, Mi-8, Mi-24, OH-58, Combined Arms and
 Global (applies to all modules).
 
 ## UI
@@ -123,7 +123,7 @@ buffer but do not affect the cockpit systems. The third and fourth
 rows of buttons are module specific functionality. The current
 module that you are slotted as is labeled as the left most button
 of the third row. Generically this is the mod button but can be
-for example Hercules or F-16C_50. The fourth row are dynamic
+for example F-16C_50 or FA-18C_hornet. The fourth row are dynamic
 buttons that are each associated with a module specific
 function. These functions are defined in the module customization
 file. The contents of the file can be viewed by pressing the mod
@@ -151,7 +151,7 @@ supported and hidden for those that are not. Some aircraft may have
 prerequisites before using LatLon. For example, F-18 currently
 requires Precise coordinates enabled. Per module notes should
 describe these requirements and are viewable by pressing the button
-labeled with the name of the module, eg Hercules, F-16C_50. The
+labeled with the name of the module, eg F-16C_50, FA-18C_hornet. The
 default behavior upon click is for the sequencer to increment the
 current waypoint and enter latlong. The next click will carry out
 the same steps. You can modify this behavior using the wpseq()
